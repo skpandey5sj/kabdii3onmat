@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kabaddi Pro Control - Complete Graphics Controller</title>
+  <title>Kabaddi Pro – Overlay Graphics (Channel 3)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -130,6 +130,15 @@
       font-size: 10px;
       opacity: 0.7;
     }
+
+    .graphic-btn-pair {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+    .graphic-btn-pair button {
+      flex: 1;
+    }
   </style>
 </head>
 <body class="text-gray-100 p-4 min-h-screen">
@@ -182,7 +191,7 @@
   <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
     <div class="flex items-center gap-4">
       <h1 class="text-3xl font-black bg-gradient-to-r from-blue-400 to-yellow-400 bg-clip-text text-transparent">
-        KABADDI PRO <span class="text-sm text-gray-400 font-normal ml-2">Graphics Controller</span>
+        KABADDI PRO <span class="text-sm text-gray-400 font-normal ml-2">Overlay Channel 3</span>
       </h1>
     </div>
     
@@ -278,7 +287,76 @@
 
     <!-- RIGHT COLUMN -->
     <div class="lg:col-span-7 space-y-6">
-      <!-- Live Preview -->
+    
+
+      <!-- Home Team Controls (score + on‑mat) -->
+      <div class="glass-card p-5">
+        <div class="flex justify-between items-center mb-3">
+          <div>
+            <span class="text-xs opacity-60">TEAM 1 - HOME</span>
+            <div id="homeNameCtrl" class="text-xl font-bold text-yellow-400 editable-field">PATNA PIRATES</div>
+          </div>
+          <div id="homeScoreCtrl" class="text-4xl font-black text-yellow-300 editable-field">00</div>
+        </div>
+        
+        <div class="mb-4">
+          <h3 class="text-yellow-400 font-semibold mb-2 text-center text-sm">PLAYERS ON MAT - HOME</h3>
+          <div id="team1-onmat" class="onmat-container"></div>
+        </div>
+        
+        <div class="grid grid-cols-6 gap-1 mb-3">
+          <button data-home="1" class="btn-success text-sm py-2">+1</button>
+          <button data-home="2" class="btn-success text-sm py-2">+2</button>
+          <button data-home="3" class="btn-success text-sm py-2">+3</button>
+          <button data-home="-1" class="btn-danger text-sm py-2">-1</button>
+          <button data-home="-2" class="btn-danger text-sm py-2">-2</button>
+          <button data-home="-3" class="btn-danger text-sm py-2">-3</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="homeAllOut" class="bg-purple-700 hover:bg-purple-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
+            All Out +2
+          </button>
+          <button id="homeBonus" class="bg-blue-700 hover:bg-blue-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
+            Bonus +1
+          </button>
+        </div>
+      </div>
+
+      <!-- Away Team Controls (score + on‑mat) -->
+      <div class="glass-card p-5">
+        <div class="flex justify-between items-center mb-3">
+          <div>
+            <span class="text-xs opacity-60">TEAM 2 - AWAY</span>
+            <div id="awayNameCtrl" class="text-xl font-bold text-orange-400 editable-field">DELHI DAREDEVILS</div>
+          </div>
+          <div id="awayScoreCtrl" class="text-4xl font-black text-orange-300 editable-field">00</div>
+        </div>
+        
+        <div class="mb-4">
+          <h3 class="text-orange-400 font-semibold mb-2 text-center text-sm">PLAYERS ON MAT - AWAY</h3>
+          <div id="team2-onmat" class="onmat-container"></div>
+        </div>
+        
+        <div class="grid grid-cols-6 gap-1 mb-3">
+          <button data-away="1" class="btn-success text-sm py-2">+1</button>
+          <button data-away="2" class="btn-success text-sm py-2">+2</button>
+          <button data-away="3" class="btn-success text-sm py-2">+3</button>
+          <button data-away="-1" class="btn-danger text-sm py-2">-1</button>
+          <button data-away="-2" class="btn-danger text-sm py-2">-2</button>
+          <button data-away="-3" class="btn-danger text-sm py-2">-3</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="awayAllOut" class="bg-purple-700 hover:bg-purple-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
+            All Out +2
+          </button>
+          <button id="awayBonus" class="bg-blue-700 hover:bg-blue-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
+            Bonus +1
+          </button>
+        </div>
+      </div>
+
+
+        <!-- Live Preview -->
       <div class="glass-card p-5">
         <h2 class="text-sm uppercase tracking-wider opacity-60 mb-3 flex items-center gap-2">
           <i class="fa-solid fa-eye"></i> LIVE PREVIEW
@@ -310,96 +388,49 @@
         </div>
       </div>
 
-      <!-- COMMON GRAPHICS -->
+      <!-- GRAPHICS CONTROLS – Channel 3 with IN/OUT buttons -->
       <div class="glass-card p-5">
         <h2 class="text-sm uppercase tracking-wider opacity-60 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-bolt-lightning text-yellow-400"></i> COMMON GRAPHICS
+          <i class="fa-solid fa-bolt-lightning text-yellow-400"></i> GRAPHICS (Overlay Channel 3)
         </h2>
-        <div class="grid grid-cols-2 gap-3">
-          <button id="bonusBtn" 
-                  class="btn-control py-3 text-base font-bold flex items-center justify-center gap-2 transition-all">
-            <i class="fa-solid fa-gift"></i> BONUS ON
-          </button>
-          <button id="doorDieBtn" 
-                  class="btn-control py-3 text-base font-bold flex items-center justify-center gap-2 transition-all">
-            <i class="fa-solid fa-skull-crossbones"></i> DO OR DIE
-          </button>
-        </div>
-      </div>
-
-      <!-- Home Team Controls -->
-      <div class="glass-card p-5">
-        <div class="flex justify-between items-center mb-3">
-          <div>
-            <span class="text-xs opacity-60">TEAM 1 - HOME</span>
-            <div id="homeNameCtrl" class="text-xl font-bold text-yellow-400 editable-field">PATNA PIRATES</div>
-          </div>
-          <div id="homeScoreCtrl" class="text-4xl font-black text-yellow-300 editable-field">00</div>
-        </div>
         
-        <!-- ON-MAT TOGGLES FOR HOME TEAM (placed here) -->
+        <!-- Bonus -->
         <div class="mb-4">
-          <h3 class="text-yellow-400 font-semibold mb-2 text-center text-sm">PLAYERS ON MAT - HOME</h3>
-          <div id="team1-onmat" class="onmat-container"></div>
-        </div>
-        
-        <div class="grid grid-cols-6 gap-1 mb-3">
-          <button data-home="1" class="btn-success text-sm py-2">+1</button>
-          <button data-home="2" class="btn-success text-sm py-2">+2</button>
-          <button data-home="3" class="btn-success text-sm py-2">+3</button>
-          <button data-home="-1" class="btn-danger text-sm py-2">-1</button>
-          <button data-home="-2" class="btn-danger text-sm py-2">-2</button>
-          <button data-home="-3" class="btn-danger text-sm py-2">-3</button>
-        </div>
-        <div class="grid grid-cols-2 gap-2 mb-3">
-          <button id="homeAllOut" class="bg-purple-700 hover:bg-purple-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
-            All Out +2
-          </button>
-          <button id="homeBonus" class="bg-blue-700 hover:bg-blue-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
-            Bonus +1
-          </button>
-        </div>
-        <button id="superTackleHomeBtn" 
-                class="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all bg-indigo-700 hover:bg-indigo-600">
-          <i class="fa-solid fa-shield-halved"></i> SUPER TACKLE HOME ON
-        </button>
-      </div>
-
-      <!-- Away Team Controls -->
-      <div class="glass-card p-5">
-        <div class="flex justify-between items-center mb-3">
-          <div>
-            <span class="text-xs opacity-60">TEAM 2 - AWAY</span>
-            <div id="awayNameCtrl" class="text-xl font-bold text-orange-400 editable-field">DELHI DAREDEVILS</div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-semibold text-yellow-400">BONUS</span>
+            <div class="graphic-btn-pair w-48">
+              <button id="bonusInBtn" class="bg-green-600 hover:bg-green-500 px-3 py-1.5 rounded-lg text-sm font-bold">IN</button>
+              <button id="bonusOutBtn" class="bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-lg text-sm font-bold">OUT</button>
+            </div>
           </div>
-          <div id="awayScoreCtrl" class="text-4xl font-black text-orange-300 editable-field">00</div>
         </div>
-        
-        <!-- ON-MAT TOGGLES FOR AWAY TEAM (placed here) -->
+
+        <!-- Super Tackle -->
         <div class="mb-4">
-          <h3 class="text-orange-400 font-semibold mb-2 text-center text-sm">PLAYERS ON MAT - AWAY</h3>
-          <div id="team2-onmat" class="onmat-container"></div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-semibold text-indigo-400">SUPER TACKLE</span>
+            <div class="graphic-btn-pair w-48">
+              <button id="superInBtn" class="bg-green-600 hover:bg-green-500 px-3 py-1.5 rounded-lg text-sm font-bold">IN</button>
+              <button id="superOutBtn" class="bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-lg text-sm font-bold">OUT</button>
+            </div>
+          </div>
         </div>
-        
-        <div class="grid grid-cols-6 gap-1 mb-3">
-          <button data-away="1" class="btn-success text-sm py-2">+1</button>
-          <button data-away="2" class="btn-success text-sm py-2">+2</button>
-          <button data-away="3" class="btn-success text-sm py-2">+3</button>
-          <button data-away="-1" class="btn-danger text-sm py-2">-1</button>
-          <button data-away="-2" class="btn-danger text-sm py-2">-2</button>
-          <button data-away="-3" class="btn-danger text-sm py-2">-3</button>
+
+        <!-- Do or Die -->
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-semibold text-rose-400">DO OR DIE</span>
+            <div class="graphic-btn-pair w-48">
+              <button id="dodInBtn" class="bg-green-600 hover:bg-green-500 px-3 py-1.5 rounded-lg text-sm font-bold">IN</button>
+              <button id="dodOutBtn" class="bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-lg text-sm font-bold">OUT</button>
+            </div>
+          </div>
         </div>
-        <div class="grid grid-cols-2 gap-2 mb-3">
-          <button id="awayAllOut" class="bg-purple-700 hover:bg-purple-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
-            All Out +2
-          </button>
-          <button id="awayBonus" class="bg-blue-700 hover:bg-blue-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
-            Bonus +1
-          </button>
-        </div>
-        <button id="superTackleAwayBtn" 
-                class="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all bg-indigo-700 hover:bg-indigo-600">
-          <i class="fa-solid fa-shield-halved"></i> SUPER TACKLE AWAY ON
+
+        <!-- Manual overlay clear button (just in case) -->
+        <button id="clearOverlayBtn"
+                class="mt-4 w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all">
+          <i class="fa-solid fa-eraser"></i> Clear Overlay Channel 3
         </button>
       </div>
     </div>
@@ -408,7 +439,7 @@
 
 <script>
 // ============================================
-// KABADDI CONTROLLER WITH vMIX INTEGRATION
+// KABADDI CONTROLLER – Overlay Channel 3, IN/OUT buttons (fixed 500 error)
 // ============================================
 
 const STORAGE_KEY = 'kabaddi-pro-working-2026';
@@ -427,26 +458,31 @@ let state = {
     connected: false,
     ip: '127.0.0.1',
     port: 8088,
-    input: '1'
-  },
-  graphics: {
-    superTackleHome: false,
-    superTackleAway: false,
-    bonus: false,
-    doOrDie: false
+    input: '1'           // used for data updates only
   }
 };
 
 let gameInterval = null;
 let raidInterval = null;
 
-// Graphics titles (exact from your vMix XML)
+// Graphics titles – exactly as in vMix (case‑sensitive)
 const graphicTitles = {
-  bonus:           "BONUS ON.gtzip",
-  superTackleAway: "SUPER TACKLE ON.gtzip",
-  superTackleHome: "SUPER TACKLE ON.gtzip",
-  doOrDie:         "DOD.gtzip"
+  bonus:       "BONUS ON.gtzip",
+  superTackle: "SUPER TACKLE ON.gtzip",
+  doOrDie:     "DOD.gtzip"
 };
+
+// Animation durations (ms) – adjust based on your actual animations
+const ANIMATION_DURATIONS = {
+  bonus:       200,
+  superTackle: 100,
+  doOrDie:     100
+};
+
+// Overlay channel = 3 (as requested)
+const OVERLAY_CHANNEL = 3;
+
+const VMIX_BASE = () => `http://${state.vmix.ip}:${state.vmix.port}/api`;
 
 function saveToStorage() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -459,9 +495,6 @@ function loadFromStorage() {
       const parsed = JSON.parse(saved);
       state = { ...state, ...parsed };
     } catch (e) {}
-  }
-  if (!state.graphics || typeof state.graphics !== 'object') {
-    state.graphics = { superTackleHome: false, superTackleAway: false, bonus: false, doOrDie: false };
   }
 }
 
@@ -483,8 +516,6 @@ function getTotalAwayScore() {
   return state.halves[0].away + state.halves[1].away;
 }
 
-const VMIX_BASE = () => `http://${state.vmix.ip}:${state.vmix.port}/api`;
-
 async function vmixSetPlayerVisible(team, playerNum, visible) {
   if (!state.vmix.connected) return;
   const name = `TEAM ${team} PLAYER ${playerNum}.Source`;
@@ -494,7 +525,6 @@ async function vmixSetPlayerVisible(team, playerNum, visible) {
 
 async function syncToVmix() {
   if (!state.vmix.connected) return;
-  
   try {
     const updates = [
       { name: 'Team 1 Name.Text', value: state.homeName },
@@ -514,75 +544,89 @@ async function syncToVmix() {
   }
 }
 
-// TOGGLE FUNCTION - Name se select karke live/output par bhejta hai
-async function toggleVmixGraphic(key) {
-  if (!state.vmix.connected) {
-    alert('vMix connect karo pehle!');
-    return;
-  }
-
+// ----- Graphic IN (show with entry animation) -----
+async function graphicIn(key) {
+  if (!state.vmix.connected) return alert('vMix connect karo pehle!');
   const title = graphicTitles[key];
-  if (!title) {
-    alert(`Graphic nahi mila: ${key}`);
-    return;
-  }
-
-  const isOn = state.graphics[key];
+  if (!title) return alert(`Graphic nahi mila: ${key}`);
 
   try {
-    if (!isOn) {
-      // ON karne ke liye: Graphic ko Preview mein bhejo → Cut to Output (live)
-      console.log(`ON: PreviewInput → ${title}`);
-      await fetch(`${VMIX_BASE()}/?Function=PreviewInput&Input=${encodeURIComponent(title)}`, { mode: 'no-cors' });
-      
-      // Thoda wait taaki vMix preview set kar le
-      await new Promise(r => setTimeout(r, 400));
-      
-      console.log('CutDirect → Live kar raha');
-      await fetch(`${VMIX_BASE()}/?Function=CutDirect`, { mode: 'no-cors' });
-    } else {
-      // OFF karne ke liye: Scorebug (tumhara main input) wapas live
-      console.log('OFF: Scorebug wapas live');
-      await fetch(`${VMIX_BASE()}/?Function=ActiveInput&Input=${encodeURIComponent(state.vmix.input)}`, { mode: 'no-cors' });
-    }
+    // Preview the graphic (optional)
+    await fetch(`${VMIX_BASE()}/?Function=PreviewInput&Input=${encodeURIComponent(title)}`, { mode: 'no-cors' });
+    await new Promise(r => setTimeout(r, 200));
 
-    state.graphics[key] = !isOn;
-    console.log(`${key} → ${state.graphics[key] ? 'ON (live)' : 'OFF (scorebug wapas)'}`);
+    // Set overlay channel 3 to this graphic (Value=1 to enable)
+    await fetch(`${VMIX_BASE()}/?Function=OverlayInput${OVERLAY_CHANNEL}&Input=${encodeURIComponent(title)}&Value=1`, { mode: 'no-cors' });
+    await new Promise(r => setTimeout(r, 200));
+
+    // Play to start entry animation
+    await fetch(`${VMIX_BASE()}/?Function=Play&Input=${encodeURIComponent(title)}`, { mode: 'no-cors' });
+
+    console.log(`${key} IN`);
   } catch (err) {
-    console.error('Toggle error:', err);
-    alert(`Error: ${err.message}\nConsole mein URL check karo.`);
+    console.error('Graphic IN failed:', err);
+    alert('vMix command failed – check console');
   }
-  updateUI();
 }
 
-// ──────────────── ON-MAT PLAYERS ────────────────
+// ----- Graphic OUT (exit animation via Pause, then clear overlay) -----
+async function graphicOut(key) {
+  if (!state.vmix.connected) return alert('vMix connect karo pehle!');
+  const title = graphicTitles[key];
+  if (!title) return alert(`Graphic nahi mila: ${key}`);
+
+  try {
+    // Pause to trigger exit animation (if out point configured)
+    await fetch(`${VMIX_BASE()}/?Function=Pause&Input=${encodeURIComponent(title)}`, { mode: 'no-cors' });
+
+    // Wait for animation to finish
+    const duration = ANIMATION_DURATIONS[key] || 2500;
+    await new Promise(r => setTimeout(r, duration + 300));
+
+    // Clear overlay channel 3 (Value=0)
+    await fetch(`${VMIX_BASE()}/?Function=OverlayInput${OVERLAY_CHANNEL}&Value=0`, { mode: 'no-cors' });
+
+    console.log(`${key} OUT`);
+  } catch (err) {
+    console.error('Graphic OUT failed:', err);
+    alert('vMix command failed – check console');
+  }
+}
+
+// Manual clear overlay channel 3
+async function clearOverlay() {
+  if (!state.vmix.connected) return alert('vMix connected nahi');
+  try {
+    await fetch(`${VMIX_BASE()}/?Function=OverlayInput${OVERLAY_CHANNEL}&Value=0`, { mode: 'no-cors' });
+  } catch (e) {
+    console.error('Clear overlay failed', e);
+  }
+}
+
 function createOnMatPlayers() {
-  const team1Container = document.getElementById('team1-onmat');
-  const team2Container = document.getElementById('team2-onmat');
+  const team1 = document.getElementById('team1-onmat');
+  const team2 = document.getElementById('team2-onmat');
+  if (!team1 || !team2) return;
 
-  if (!team1Container || !team2Container) return;
-
-  team1Container.innerHTML = '';
-  team2Container.innerHTML = '';
+  team1.innerHTML = '';
+  team2.innerHTML = '';
 
   for (let i = 1; i <= 7; i++) {
-    // Team 1 - Home
     const div1 = document.createElement('div');
     div1.className = 'onmat-item';
     div1.innerHTML = `
       <span class="onmat-label">P${i}</span>
       <input type="checkbox" class="player-toggle" checked data-team="1" data-player="${i}" onchange="vmixSetPlayerVisible(1, ${i}, this.checked)">
     `;
-    team1Container.appendChild(div1);
+    team1.appendChild(div1);
 
-    // Team 2 - Away
     const div2 = document.createElement('div');
     div2.className = 'onmat-item';
     div2.innerHTML = `
       <span class="onmat-label">P${i}</span>
       <input type="checkbox" class="player-toggle" checked data-team="2" data-player="${i}" onchange="vmixSetPlayerVisible(2, ${i}, this.checked)">
     `;
-    team2Container.appendChild(div2);
+    team2.appendChild(div2);
   }
 }
 
@@ -616,29 +660,136 @@ function updateUI() {
     ? '<i class="fa-solid fa-circle text-emerald-400"></i><span>vMix Connected</span>'
     : '<i class="fa-solid fa-circle text-red-400"></i><span>vMix Disconnected</span>';
 
-  // Graphics buttons update - simple & clean
-  const btns = [
-    { id: 'bonusBtn', key: 'bonus', label: 'BONUS', icon: 'fa-gift' },
-    { id: 'doorDieBtn', key: 'doOrDie', label: 'DO OR DIE', icon: 'fa-skull-crossbones' },
-    { id: 'superTackleHomeBtn', key: 'superTackleHome', label: 'SUPER TACKLE HOME', icon: 'fa-shield-halved' },
-    { id: 'superTackleAwayBtn', key: 'superTackleAway', label: 'SUPER TACKLE AWAY', icon: 'fa-shield-halved' }
-  ];
-
-  btns.forEach(b => {
-    const btn = document.getElementById(b.id);
-    if (!btn) return;
-    const on = state.graphics[b.key];
-    btn.innerHTML = `<i class="fa-solid ${b.icon}"></i> ${b.label} ${on ? 'OFF' : 'ON'}`;
-    btn.className = `w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all ${
-      on ? 'bg-emerald-600 hover:bg-emerald-500 border border-emerald-400' : 'bg-indigo-700 hover:bg-indigo-600'
-    }`;
-  });
-
   if (state.vmix.connected) syncToVmix();
   saveToStorage();
 }
 
-// Timer functions
+document.addEventListener('DOMContentLoaded', () => {
+  loadFromStorage();
+
+  // Editable fields
+  makeEditable(document.getElementById('homeNameCtrl'), () => state.homeName, v => state.homeName = v);
+  makeEditable(document.getElementById('awayNameCtrl'), () => state.awayName, v => state.awayName = v);
+  makeEditable(document.getElementById('homeScoreCtrl'), getTotalHomeScore, v => {
+    const diff = Number(v) - getTotalHomeScore();
+    getCurrentHalfScores().home += diff;
+  });
+  makeEditable(document.getElementById('awayScoreCtrl'), getTotalAwayScore, v => {
+    const diff = Number(v) - getTotalAwayScore();
+    getCurrentHalfScores().away += diff;
+  });
+  makeEditable(document.getElementById('gameTimerDisplay'), () => formatTime(state.gameTime), v => {
+    if (typeof v === 'number') state.gameTime = v;
+  }, true);
+
+  document.getElementById('halfSelect').addEventListener('change', e => {
+    state.currentHalf = Number(e.target.value);
+    updateUI();
+  });
+
+  // Timer controls
+  document.getElementById('gameStart').onclick = startGameTimer;
+  document.getElementById('gamePause').onclick = pauseGameTimer;
+  document.getElementById('gameReset').onclick = resetGameTimer;
+
+  document.querySelectorAll('[data-game-adjust]').forEach(btn => {
+    btn.onclick = () => {
+      const adj = Number(btn.dataset.gameAdjust);
+      state.gameTime = Math.max(0, Math.min(3600, state.gameTime + adj));
+      updateUI();
+    };
+  });
+
+  document.getElementById('raidStart').onclick = startRaidTimer;
+  document.getElementById('raidStop').onclick = stopRaidTimer;
+  document.getElementById('raidReset').onclick = () => { state.raidTime = 30; updateUI(); };
+  document.getElementById('raidPlus1s').onclick = () => { state.raidTime = Math.max(0, Math.min(300, state.raidTime + 1)); updateUI(); };
+  document.getElementById('raidMinus1s').onclick = () => { state.raidTime = Math.max(0, state.raidTime - 1); updateUI(); };
+
+  // Score buttons
+  document.querySelectorAll('[data-home]').forEach(btn => {
+    btn.onclick = () => {
+      const val = Number(btn.dataset.home);
+      getCurrentHalfScores().home = Math.max(0, getCurrentHalfScores().home + val);
+      updateUI();
+    };
+  });
+
+  document.querySelectorAll('[data-away]').forEach(btn => {
+    btn.onclick = () => {
+      const val = Number(btn.dataset.away);
+      getCurrentHalfScores().away = Math.max(0, getCurrentHalfScores().away + val);
+      updateUI();
+    };
+  });
+
+  document.getElementById('homeAllOut').onclick = () => { getCurrentHalfScores().home += 2; updateUI(); };
+  document.getElementById('awayAllOut').onclick = () => { getCurrentHalfScores().away += 2; updateUI(); };
+  document.getElementById('homeBonus').onclick = () => { getCurrentHalfScores().home += 1; updateUI(); };
+  document.getElementById('awayBonus').onclick = () => { getCurrentHalfScores().away += 1; updateUI(); };
+
+  // Raid team
+  document.getElementById('setHomeRaid').onclick = () => { state.raidingTeam = 'home'; updateUI(); };
+  document.getElementById('setAwayRaid').onclick = () => { state.raidingTeam = 'away'; updateUI(); };
+  document.getElementById('setNoneRaid').onclick = () => { state.raidingTeam = 'none'; updateUI(); };
+
+  // Swap & Reset
+  document.getElementById('swapTeamsBtn').onclick = () => {
+    [state.homeName, state.awayName] = [state.awayName, state.homeName];
+    state.halves.forEach(h => [h.home, h.away] = [h.away, h.home]);
+    if (state.raidingTeam === 'home') state.raidingTeam = 'away';
+    else if (state.raidingTeam === 'away') state.raidingTeam = 'home';
+    updateUI();
+  };
+
+  document.getElementById('resetBtn').onclick = () => {
+    if (confirm('Pura reset karna hai?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  };
+
+  // vMix connection modal
+  document.getElementById('vmixBtn').onclick = () => document.getElementById('vmixModal').classList.remove('hidden');
+  document.getElementById('vmixClose').onclick = () => document.getElementById('vmixModal').classList.add('hidden');
+  document.getElementById('vmixForm').onsubmit = e => {
+    e.preventDefault();
+    state.vmix.ip = document.getElementById('vmixIP').value.trim();
+    state.vmix.port = Number(document.getElementById('vmixPort').value) || 8088;
+    state.vmix.input = document.getElementById('vmixInput').value.trim();
+    state.vmix.connected = true;
+    document.getElementById('vmixModal').classList.add('hidden');
+    updateUI();
+    syncToVmix();
+  };
+
+  // Graphic IN/OUT buttons
+  document.getElementById('bonusInBtn').onclick = () => graphicIn('bonus');
+  document.getElementById('bonusOutBtn').onclick = () => graphicOut('bonus');
+  document.getElementById('superInBtn').onclick = () => graphicIn('superTackle');
+  document.getElementById('superOutBtn').onclick = () => graphicOut('superTackle');
+  document.getElementById('dodInBtn').onclick = () => graphicIn('doOrDie');
+  document.getElementById('dodOutBtn').onclick = () => graphicOut('doOrDie');
+
+  // Clear overlay button
+  document.getElementById('clearOverlayBtn').onclick = clearOverlay;
+
+  window.vmixSetPlayerVisible = vmixSetPlayerVisible;
+
+  createOnMatPlayers();
+  updateUI();
+
+  if (state.gameRunning) startGameTimer();
+  if (state.raidRunning) startRaidTimer();
+
+  window.addEventListener('beforeunload', e => {
+    if (state.gameRunning || state.raidRunning) {
+      e.preventDefault();
+      e.returnValue = 'Timers chal rahe hain! Sure?';
+    }
+  });
+});
+
 function startGameTimer() {
   if (state.gameRunning) return;
   state.gameRunning = true;
@@ -679,17 +830,11 @@ function stopRaidTimer() {
   updateUI();
 }
 
-function setRaidTime(seconds) {
-  stopRaidTimer();
-  state.raidTime = seconds;
-  updateUI();
-}
-
 function makeEditable(el, getter, setter, isTimer = false) {
   el.addEventListener('dblclick', (e) => {
     e.stopPropagation();
     const current = getter();
-    const newVal = prompt('Enter new value:', current);
+    const newVal = prompt('Naya value daalo:', current);
     if (newVal !== null) {
       if (isTimer && newVal.includes(':')) {
         const [m, s] = newVal.split(':').map(Number);
@@ -701,128 +846,6 @@ function makeEditable(el, getter, setter, isTimer = false) {
     }
   });
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  loadFromStorage();
-
-  makeEditable(document.getElementById('homeNameCtrl'), () => state.homeName, v => state.homeName = v);
-  makeEditable(document.getElementById('awayNameCtrl'), () => state.awayName, v => state.awayName = v);
-  makeEditable(document.getElementById('homeScoreCtrl'), getTotalHomeScore, v => {
-    const diff = Number(v) - getTotalHomeScore();
-    getCurrentHalfScores().home += diff;
-  });
-  makeEditable(document.getElementById('awayScoreCtrl'), getTotalAwayScore, v => {
-    const diff = Number(v) - getTotalAwayScore();
-    getCurrentHalfScores().away += diff;
-  });
-  makeEditable(document.getElementById('gameTimerDisplay'), () => formatTime(state.gameTime), v => {
-    if (typeof v === 'number') state.gameTime = v;
-  }, true);
-
-  document.getElementById('halfSelect').addEventListener('change', e => {
-    state.currentHalf = Number(e.target.value);
-    updateUI();
-  });
-
-  document.getElementById('gameStart').onclick = startGameTimer;
-  document.getElementById('gamePause').onclick = pauseGameTimer;
-  document.getElementById('gameReset').onclick = resetGameTimer;
-
-  document.querySelectorAll('[data-game-adjust]').forEach(btn => {
-    btn.onclick = () => {
-      const adj = Number(btn.dataset.gameAdjust);
-      state.gameTime = Math.max(0, Math.min(3600, state.gameTime + adj));
-      updateUI();
-    };
-  });
-
-  document.getElementById('raidStart').onclick = startRaidTimer;
-  document.getElementById('raidStop').onclick = stopRaidTimer;
-  document.getElementById('raidReset').onclick = () => setRaidTime(30);
-  document.getElementById('raidPlus1s').onclick = () => {
-    state.raidTime = Math.max(0, Math.min(300, state.raidTime + 1));
-    updateUI();
-  };
-  document.getElementById('raidMinus1s').onclick = () => {
-    state.raidTime = Math.max(0, state.raidTime - 1);
-    updateUI();
-  };
-
-  document.querySelectorAll('[data-home]').forEach(btn => {
-    btn.onclick = () => {
-      const val = Number(btn.dataset.home);
-      getCurrentHalfScores().home = Math.max(0, getCurrentHalfScores().home + val);
-      updateUI();
-    };
-  });
-
-  document.querySelectorAll('[data-away]').forEach(btn => {
-    btn.onclick = () => {
-      const val = Number(btn.dataset.away);
-      getCurrentHalfScores().away = Math.max(0, getCurrentHalfScores().away + val);
-      updateUI();
-    };
-  });
-
-  document.getElementById('homeAllOut').onclick = () => { getCurrentHalfScores().home += 2; updateUI(); };
-  document.getElementById('awayAllOut').onclick = () => { getCurrentHalfScores().away += 2; updateUI(); };
-  document.getElementById('homeBonus').onclick = () => { getCurrentHalfScores().home += 1; updateUI(); };
-  document.getElementById('awayBonus').onclick = () => { getCurrentHalfScores().away += 1; updateUI(); };
-
-  document.getElementById('setHomeRaid').onclick = () => { state.raidingTeam = 'home'; updateUI(); };
-  document.getElementById('setAwayRaid').onclick = () => { state.raidingTeam = 'away'; updateUI(); };
-  document.getElementById('setNoneRaid').onclick = () => { state.raidingTeam = 'none'; updateUI(); };
-
-  document.getElementById('swapTeamsBtn').onclick = () => {
-    [state.homeName, state.awayName] = [state.awayName, state.homeName];
-    state.halves.forEach(h => [h.home, h.away] = [h.away, h.home]);
-    if (state.raidingTeam === 'home') state.raidingTeam = 'away';
-    else if (state.raidingTeam === 'away') state.raidingTeam = 'home';
-    updateUI();
-  };
-
-  document.getElementById('resetBtn').onclick = () => {
-    if (confirm('Sab reset karna hai?')) {
-      localStorage.removeItem(STORAGE_KEY);
-      location.reload();
-    }
-  };
-
-  document.getElementById('vmixBtn').onclick = () => document.getElementById('vmixModal').classList.remove('hidden');
-  document.getElementById('vmixClose').onclick = () => document.getElementById('vmixModal').classList.add('hidden');
-  document.getElementById('vmixForm').onsubmit = e => {
-    e.preventDefault();
-    state.vmix.ip = document.getElementById('vmixIP').value.trim();
-    state.vmix.port = Number(document.getElementById('vmixPort').value) || 8088;
-    state.vmix.input = document.getElementById('vmixInput').value.trim();
-    state.vmix.connected = true;
-    document.getElementById('vmixModal').classList.add('hidden');
-    updateUI();
-    syncToVmix();
-  };
-
-  // Graphics buttons
-  document.getElementById('bonusBtn').onclick = () => toggleVmixGraphic('bonus');
-  document.getElementById('doorDieBtn').onclick = () => toggleVmixGraphic('doOrDie');
-  document.getElementById('superTackleHomeBtn').onclick = () => toggleVmixGraphic('superTackleHome');
-  document.getElementById('superTackleAwayBtn').onclick = () => toggleVmixGraphic('superTackleAway');
-
-  // Make vmixSetPlayerVisible available globally for the onchange events
-  window.vmixSetPlayerVisible = vmixSetPlayerVisible;
-
-  createOnMatPlayers();
-  updateUI();
-
-  if (state.gameRunning) startGameTimer();
-  if (state.raidRunning) startRaidTimer();
-
-  window.addEventListener('beforeunload', e => {
-    if (state.gameRunning || state.raidRunning) {
-      e.preventDefault();
-      e.returnValue = 'Timers chal rahe hain! Sure?';
-    }
-  });
-});
 </script>
 </body>
 </html>
