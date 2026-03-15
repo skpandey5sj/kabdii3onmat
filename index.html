@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kabaddi Pro Control - Complete Graphics Controller</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #0a0c14;
+      --card-bg: rgba(20, 25, 40, 0.85);
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-yellow: #f59e0b;
+    }
+    
+    body {
+      background: linear-gradient(145deg, #0f1422 0%, #1a1f32 100%);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    
+    .glass-card {
+      background: rgba(20, 28, 45, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1.2rem;
+      box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.6);
+    }
+    
+    .score-glow {
+      text-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+    }
+    
+    .timer-display {
+      font-family: 'Courier New', monospace;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+    
+    .btn-control {
+      @apply px-4 py-2.5 rounded-lg font-semibold transition-all duration-150;
+      background: rgba(45, 55, 75, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .btn-control:hover {
+      background: rgba(60, 70, 95, 0.9);
+      transform: translateY(-1px);
+    }
+    
+    .btn-success {
+      background: linear-gradient(145deg, #059669, #047857);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(145deg, #dc2626, #b91c1c);
+    }
+    
+    .vmix-status {
+      @apply flex items-center gap-2 px-4 py-2 rounded-full text-sm;
+    }
+    
+    .vmix-connected {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+    }
+    
+    .vmix-disconnected {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+    }
+    
+    .editable-field {
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .editable-field:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-radius: 0.5rem;
+    }
+    
+    /* On-mat toggle styling */
+    .player-toggle {
+      appearance: none;
+      width: 42px;
+      height: 22px;
+      background: #4b5563;
+      border-radius: 9999px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .player-toggle:checked {
+      background: #10b981;
+    }
+    .player-toggle::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: all 0.2s;
+    }
+    .player-toggle:checked::after {
+      transform: translateX(20px);
+    }
+    
+    .onmat-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin: 15px 0;
+    }
+    
+    .onmat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .onmat-label {
+      font-size: 10px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body class="text-gray-100 p-4 min-h-screen">
+
+<!-- vMix Connection Modal -->
+<div id="vmixModal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50 backdrop-blur-sm">
+  <div class="glass-card p-8 w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+      <i class="fa-solid fa-plug text-blue-400"></i>
+      vMix Connection
+    </h2>
+    
+    <form id="vmixForm">
+      <div class="space-y-5">
+        <div>
+          <label class="block mb-2 text-sm font-medium opacity-80">IP Address</label>
+          <input id="vmixIP" type="text" value="127.0.0.1" 
+                 class="w-full p-3 bg-slate-800/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        
+        <div>
+          <label class="block mb-2 text-sm font-medium opacity-80">Port</label>
+          <input id="vmixPort" type="number" value="8088" 
+                 class="w-full p-3 bg-slate-800/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        
+        <div>
+          <label class="block mb-2 text-sm font-medium opacity-80">Scorebug Input (Number or GUID)</label>
+          <input id="vmixInput" type="text" value="1" 
+                 class="w-full p-3 bg-slate-800/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+      </div>
+      
+      <div class="flex gap-4 justify-end mt-8">
+        <button type="button" id="vmixClose" 
+                class="px-6 py-3 bg-slate-700 rounded-xl hover:bg-slate-600 transition font-medium">
+          Cancel
+        </button>
+        <button type="submit" 
+                class="px-6 py-3 bg-emerald-600 rounded-xl hover:bg-emerald-500 transition font-medium">
+          <i class="fa-solid fa-link mr-2"></i>Connect
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Main Header -->
+<div class="max-w-7xl mx-auto">
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-4">
+      <h1 class="text-3xl font-black bg-gradient-to-r from-blue-400 to-yellow-400 bg-clip-text text-transparent">
+        KABADDI PRO <span class="text-sm text-gray-400 font-normal ml-2">Graphics Controller</span>
+      </h1>
+    </div>
+    
+    <div class="flex gap-3">
+      <div id="vmixStatus" class="vmix-status vmix-disconnected">
+        <i class="fa-solid fa-circle"></i>
+        <span>vMix Disconnected</span>
+      </div>
+      
+      <button id="vmixBtn" class="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded-full font-medium transition flex items-center gap-2">
+        <i class="fa-solid fa-gear"></i>
+        vMix Settings
+      </button>
+      
+      <button id="swapTeamsBtn" class="bg-indigo-600 hover:bg-indigo-500 px-5 py-2 rounded-full font-medium transition">
+        <i class="fa-solid fa-arrow-right-arrow-left mr-2"></i>Swap
+      </button>
+      
+      <button id="resetBtn" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-full font-medium transition">
+        <i class="fa-solid fa-rotate-left mr-2"></i>Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- LEFT COLUMN: Timers & Controls -->
+    <div class="lg:col-span-5 space-y-6">
+      <!-- Game Clock -->
+      <div class="glass-card p-5">
+        <h2 class="text-sm uppercase tracking-wider opacity-60 mb-3 flex items-center gap-2">
+          <i class="fa-regular fa-clock"></i> GAME CLOCK
+        </h2>
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-semibold">Timer</span>
+          <span id="gameTimerDisplay" class="text-3xl font-mono font-bold text-emerald-400 editable-field">15:00</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 mb-2">
+          <button data-game-adjust="60" class="btn-control text-sm py-2">+60s</button>
+          <button data-game-adjust="-60" class="btn-control text-sm py-2">-60s</button>
+          <button data-game-adjust="10" class="btn-control text-sm py-2">+10s</button>
+          <button data-game-adjust="-10" class="btn-control text-sm py-2">-10s</button>
+          <button data-game-adjust="5" class="btn-control text-sm py-2">+5s</button>
+          <button data-game-adjust="-5" class="btn-control text-sm py-2">-5s</button>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <button id="gameStart" class="btn-success py-2 text-sm">START</button>
+          <button id="gamePause" class="bg-amber-600 hover:bg-amber-500 py-2 rounded-lg text-sm">PAUSE</button>
+          <button id="gameReset" class="btn-danger py-2 text-sm">RESET</button>
+        </div>
+      </div>
+
+      <!-- Raid Timer -->
+      <div class="glass-card p-5">
+        <h2 class="text-sm uppercase tracking-wider opacity-60 mb-3 flex items-center gap-2">
+          <i class="fa-regular fa-hourglass-half"></i> RAID TIMER
+        </h2>
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-semibold">Timer</span>
+          <span id="raidTimerDisplay" class="text-3xl font-mono font-bold text-amber-400">30</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-2">
+          <button id="raidStart" class="btn-success py-2 text-sm">RAID IN</button>
+          <button id="raidStop" class="btn-danger py-2 text-sm">RAID OUT</button>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <button id="raidReset" class="btn-control text-sm py-2 col-span-1">RESET</button>
+          <button id="raidPlus1s" class="bg-emerald-700 hover:bg-emerald-600 text-sm py-2 rounded-lg font-semibold">+1s</button>
+          <button id="raidMinus1s" class="bg-rose-700 hover:bg-rose-600 text-sm py-2 rounded-lg font-semibold">-1s</button>
+        </div>
+      </div>
+
+      <!-- Half & Raiding Team -->
+      <div class="glass-card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-semibold">HALF:</span>
+          <select id="halfSelect" class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500">
+            <option value="1">1st Half</option>
+            <option value="2">2nd Half</option>
+          </select>
+        </div>
+        <div>
+          <span class="font-semibold block mb-2">RAIDING TEAM:</span>
+          <div class="flex gap-2">
+            <button id="setHomeRaid" class="flex-1 py-2 bg-yellow-600/30 hover:bg-yellow-600/50 border border-yellow-500 rounded-lg font-bold text-sm">HOME</button>
+            <button id="setNoneRaid" class="flex-1 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-bold text-sm">NONE</button>
+            <button id="setAwayRaid" class="flex-1 py-2 bg-orange-600/30 hover:bg-orange-600/50 border border-orange-500 rounded-lg font-bold text-sm">AWAY</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="lg:col-span-7 space-y-6">
+      <!-- Live Preview -->
+      <div class="glass-card p-5">
+        <h2 class="text-sm uppercase tracking-wider opacity-60 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-eye"></i> LIVE PREVIEW
+        </h2>
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-4 border border-white/10">
+          <div class="flex items-center justify-between">
+            <div class="text-center w-1/3">
+              <div id="previewHomeName" class="text-lg font-bold text-yellow-400 mb-1 truncate">PATNA PIRATES</div>
+              <div id="previewHomeScore" class="text-5xl font-black text-yellow-300 score-glow">00</div>
+            </div>
+            <div class="text-center">
+              <div id="previewHalf" class="text-xl font-bold mb-1">1ST HALF</div>
+              <div class="flex items-center justify-center gap-4 text-base">
+                <span id="previewHomeArrow" class="text-yellow-400 text-2xl">←</span>
+                <span id="previewRaidTeam" class="font-semibold text-sm">RAID: HOME</span>
+                <span id="previewAwayArrow" class="text-orange-400 text-2xl"></span>
+              </div>
+              <div class="flex justify-center gap-4 mt-2 text-lg font-mono">
+                <span id="previewGameTimer" class="text-emerald-400">15:00</span>
+                <span class="opacity-40">|</span>
+                <span id="previewRaidTimer" class="text-amber-400">30</span>
+              </div>
+            </div>
+            <div class="text-center w-1/3">
+              <div id="previewAwayName" class="text-lg font-bold text-orange-400 mb-1 truncate">DELHI DAREDEVILS</div>
+              <div id="previewAwayScore" class="text-5xl font-black text-orange-300 score-glow">00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMON GRAPHICS -->
+      <div class="glass-card p-5">
+        <h2 class="text-sm uppercase tracking-wider opacity-60 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-bolt-lightning text-yellow-400"></i> COMMON GRAPHICS
+        </h2>
+        <div class="grid grid-cols-2 gap-3">
+          <button id="bonusBtn" 
+                  class="btn-control py-3 text-base font-bold flex items-center justify-center gap-2 transition-all">
+            <i class="fa-solid fa-gift"></i> BONUS ON
+          </button>
+          <button id="doorDieBtn" 
+                  class="btn-control py-3 text-base font-bold flex items-center justify-center gap-2 transition-all">
+            <i class="fa-solid fa-skull-crossbones"></i> DO OR DIE
+          </button>
+        </div>
+      </div>
+
+      <!-- Home Team Controls -->
+      <div class="glass-card p-5">
+        <div class="flex justify-between items-center mb-3">
+          <div>
+            <span class="text-xs opacity-60">TEAM 1 - HOME</span>
+            <div id="homeNameCtrl" class="text-xl font-bold text-yellow-400 editable-field">PATNA PIRATES</div>
+          </div>
+          <div id="homeScoreCtrl" class="text-4xl font-black text-yellow-300 editable-field">00</div>
+        </div>
+        
+        <!-- ON-MAT TOGGLES FOR HOME TEAM (placed here) -->
+        <div class="mb-4">
+          <h3 class="text-yellow-400 font-semibold mb-2 text-center text-sm">PLAYERS ON MAT - HOME</h3>
+          <div id="team1-onmat" class="onmat-container"></div>
+        </div>
+        
+        <div class="grid grid-cols-6 gap-1 mb-3">
+          <button data-home="1" class="btn-success text-sm py-2">+1</button>
+          <button data-home="2" class="btn-success text-sm py-2">+2</button>
+          <button data-home="3" class="btn-success text-sm py-2">+3</button>
+          <button data-home="-1" class="btn-danger text-sm py-2">-1</button>
+          <button data-home="-2" class="btn-danger text-sm py-2">-2</button>
+          <button data-home="-3" class="btn-danger text-sm py-2">-3</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <button id="homeAllOut" class="bg-purple-700 hover:bg-purple-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
+            All Out +2
+          </button>
+          <button id="homeBonus" class="bg-blue-700 hover:bg-blue-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
+            Bonus +1
+          </button>
+        </div>
+        <button id="superTackleHomeBtn" 
+                class="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all bg-indigo-700 hover:bg-indigo-600">
+          <i class="fa-solid fa-shield-halved"></i> SUPER TACKLE HOME ON
+        </button>
+      </div>
+
+      <!-- Away Team Controls -->
+      <div class="glass-card p-5">
+        <div class="flex justify-between items-center mb-3">
+          <div>
+            <span class="text-xs opacity-60">TEAM 2 - AWAY</span>
+            <div id="awayNameCtrl" class="text-xl font-bold text-orange-400 editable-field">DELHI DAREDEVILS</div>
+          </div>
+          <div id="awayScoreCtrl" class="text-4xl font-black text-orange-300 editable-field">00</div>
+        </div>
+        
+        <!-- ON-MAT TOGGLES FOR AWAY TEAM (placed here) -->
+        <div class="mb-4">
+          <h3 class="text-orange-400 font-semibold mb-2 text-center text-sm">PLAYERS ON MAT - AWAY</h3>
+          <div id="team2-onmat" class="onmat-container"></div>
+        </div>
+        
+        <div class="grid grid-cols-6 gap-1 mb-3">
+          <button data-away="1" class="btn-success text-sm py-2">+1</button>
+          <button data-away="2" class="btn-success text-sm py-2">+2</button>
+          <button data-away="3" class="btn-success text-sm py-2">+3</button>
+          <button data-away="-1" class="btn-danger text-sm py-2">-1</button>
+          <button data-away="-2" class="btn-danger text-sm py-2">-2</button>
+          <button data-away="-3" class="btn-danger text-sm py-2">-3</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <button id="awayAllOut" class="bg-purple-700 hover:bg-purple-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
+            All Out +2
+          </button>
+          <button id="awayBonus" class="bg-blue-700 hover:bg-blue-600 py-2 rounded-lg text-sm flex items-center justify-center gap-1">
+            Bonus +1
+          </button>
+        </div>
+        <button id="superTackleAwayBtn" 
+                class="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all bg-indigo-700 hover:bg-indigo-600">
+          <i class="fa-solid fa-shield-halved"></i> SUPER TACKLE AWAY ON
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// KABADDI CONTROLLER WITH vMIX INTEGRATION
+// ============================================
+
+const STORAGE_KEY = 'kabaddi-pro-working-2026';
+
+let state = {
+  homeName: 'PATNA PIRATES',
+  awayName: 'DELHI DAREDEVILS',
+  halves: [{ home: 0, away: 0 }, { home: 0, away: 0 }],
+  currentHalf: 1,
+  gameTime: 900,
+  raidTime: 30,
+  gameRunning: false,
+  raidRunning: false,
+  raidingTeam: 'none',
+  vmix: {
+    connected: false,
+    ip: '127.0.0.1',
+    port: 8088,
+    input: '1'
+  },
+  graphics: {
+    superTackleHome: false,
+    superTackleAway: false,
+    bonus: false,
+    doOrDie: false
+  }
+};
+
+let gameInterval = null;
+let raidInterval = null;
+
+// Graphics titles (exact from your vMix XML)
+const graphicTitles = {
+  bonus:           "bonuson.gtzip",
+  superTackleAway: "supertackleonaway.gtzip",
+  superTackleHome: "supertackleonhome.gtzip",
+  doOrDie:         "DOORDIE.gtzip"
+};
+
+function saveToStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadFromStorage() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      state = { ...state, ...parsed };
+    } catch (e) {}
+  }
+  if (!state.graphics || typeof state.graphics !== 'object') {
+    state.graphics = { superTackleHome: false, superTackleAway: false, bonus: false, doOrDie: false };
+  }
+}
+
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function getCurrentHalfScores() {
+  return state.halves[state.currentHalf - 1];
+}
+
+function getTotalHomeScore() {
+  return state.halves[0].home + state.halves[1].home;
+}
+
+function getTotalAwayScore() {
+  return state.halves[0].away + state.halves[1].away;
+}
+
+const VMIX_BASE = () => `http://${state.vmix.ip}:${state.vmix.port}/api`;
+
+async function vmixSetPlayerVisible(team, playerNum, visible) {
+  if (!state.vmix.connected) return;
+  const name = `TEAM ${team} PLAYER ${playerNum}.Source`;
+  const url = `${VMIX_BASE()}/?Function=SetImageVisible&Input=${encodeURIComponent(state.vmix.input)}&SelectedName=${encodeURIComponent(name)}&Value=${visible}`;
+  try { await fetch(url, { mode: 'no-cors' }); } catch {}
+}
+
+async function syncToVmix() {
+  if (!state.vmix.connected) return;
+  
+  try {
+    const updates = [
+      { name: 'Team 1 Name.Text', value: state.homeName },
+      { name: 'Team 2 Name.Text', value: state.awayName },
+      { name: 'TEAM 1 SCORE.Text', value: getTotalHomeScore().toString().padStart(2, '0') },
+      { name: 'TEAM 2 SCORE.Text', value: getTotalAwayScore().toString().padStart(2, '0') },
+      { name: 'CLOCK.Text', value: formatTime(state.gameTime) },
+      { name: 'RAID TIMER1.Text', value: state.currentHalf === 1 ? '1st HALF' : '2nd HALF' },
+      { name: 'RAID TIMER.Text', value: state.raidTime.toString().padStart(2, '0') }
+    ];
+    
+    for (const update of updates) {
+      await fetch(`${VMIX_BASE()}/?Function=SetText&Input=${encodeURIComponent(state.vmix.input)}&SelectedName=${encodeURIComponent(update.name)}&Value=${encodeURIComponent(update.value)}`, { mode: 'no-cors' });
+    }
+  } catch (error) {
+    console.error('vMix sync failed:', error);
+  }
+}
+
+// TOGGLE FUNCTION - Name se select karke live/output par bhejta hai
+async function toggleVmixGraphic(key) {
+  if (!state.vmix.connected) {
+    alert('vMix connect karo pehle!');
+    return;
+  }
+
+  const title = graphicTitles[key];
+  if (!title) {
+    alert(`Graphic nahi mila: ${key}`);
+    return;
+  }
+
+  const isOn = state.graphics[key];
+
+  try {
+    if (!isOn) {
+      // ON karne ke liye: Graphic ko Preview mein bhejo → Cut to Output (live)
+      console.log(`ON: PreviewInput → ${title}`);
+      await fetch(`${VMIX_BASE()}/?Function=PreviewInput&Input=${encodeURIComponent(title)}`, { mode: 'no-cors' });
+      
+      // Thoda wait taaki vMix preview set kar le
+      await new Promise(r => setTimeout(r, 400));
+      
+      console.log('CutDirect → Live kar raha');
+      await fetch(`${VMIX_BASE()}/?Function=CutDirect`, { mode: 'no-cors' });
+    } else {
+      // OFF karne ke liye: Scorebug (tumhara main input) wapas live
+      console.log('OFF: Scorebug wapas live');
+      await fetch(`${VMIX_BASE()}/?Function=ActiveInput&Input=${encodeURIComponent(state.vmix.input)}`, { mode: 'no-cors' });
+    }
+
+    state.graphics[key] = !isOn;
+    console.log(`${key} → ${state.graphics[key] ? 'ON (live)' : 'OFF (scorebug wapas)'}`);
+  } catch (err) {
+    console.error('Toggle error:', err);
+    alert(`Error: ${err.message}\nConsole mein URL check karo.`);
+  }
+  updateUI();
+}
+
+// ──────────────── ON-MAT PLAYERS ────────────────
+function createOnMatPlayers() {
+  const team1Container = document.getElementById('team1-onmat');
+  const team2Container = document.getElementById('team2-onmat');
+
+  if (!team1Container || !team2Container) return;
+
+  team1Container.innerHTML = '';
+  team2Container.innerHTML = '';
+
+  for (let i = 1; i <= 7; i++) {
+    // Team 1 - Home
+    const div1 = document.createElement('div');
+    div1.className = 'onmat-item';
+    div1.innerHTML = `
+      <span class="onmat-label">P${i}</span>
+      <input type="checkbox" class="player-toggle" checked data-team="1" data-player="${i}" onchange="vmixSetPlayerVisible(1, ${i}, this.checked)">
+    `;
+    team1Container.appendChild(div1);
+
+    // Team 2 - Away
+    const div2 = document.createElement('div');
+    div2.className = 'onmat-item';
+    div2.innerHTML = `
+      <span class="onmat-label">P${i}</span>
+      <input type="checkbox" class="player-toggle" checked data-team="2" data-player="${i}" onchange="vmixSetPlayerVisible(2, ${i}, this.checked)">
+    `;
+    team2Container.appendChild(div2);
+  }
+}
+
+function updateUI() {
+  document.getElementById('previewHomeName').textContent = state.homeName;
+  document.getElementById('previewAwayName').textContent = state.awayName;
+  document.getElementById('previewHomeScore').textContent = getTotalHomeScore().toString().padStart(2, '0');
+  document.getElementById('previewAwayScore').textContent = getTotalAwayScore().toString().padStart(2, '0');
+  document.getElementById('previewHalf').textContent = state.currentHalf === 1 ? '1ST HALF' : '2ND HALF';
+  document.getElementById('previewGameTimer').textContent = formatTime(state.gameTime);
+  document.getElementById('previewRaidTimer').textContent = state.raidTime.toString().padStart(2, '0');
+  
+  const raidText = state.raidingTeam === 'home' ? 'RAID: HOME' : 
+                   state.raidingTeam === 'away' ? 'RAID: AWAY' : 'NO RAID';
+  document.getElementById('previewRaidTeam').textContent = raidText;
+  document.getElementById('previewHomeArrow').textContent = state.raidingTeam === 'home' ? '←' : '';
+  document.getElementById('previewAwayArrow').textContent = state.raidingTeam === 'away' ? '→' : '';
+  
+  document.getElementById('homeNameCtrl').textContent = state.homeName;
+  document.getElementById('awayNameCtrl').textContent = state.awayName;
+  document.getElementById('homeScoreCtrl').textContent = getTotalHomeScore().toString().padStart(2, '0');
+  document.getElementById('awayScoreCtrl').textContent = getTotalAwayScore().toString().padStart(2, '0');
+  document.getElementById('gameTimerDisplay').textContent = formatTime(state.gameTime);
+  document.getElementById('raidTimerDisplay').textContent = state.raidTime.toString().padStart(2, '0');
+  
+  document.getElementById('halfSelect').value = state.currentHalf;
+
+  const vmixStatus = document.getElementById('vmixStatus');
+  vmixStatus.className = state.vmix.connected ? 'vmix-status vmix-connected' : 'vmix-status vmix-disconnected';
+  vmixStatus.innerHTML = state.vmix.connected 
+    ? '<i class="fa-solid fa-circle text-emerald-400"></i><span>vMix Connected</span>'
+    : '<i class="fa-solid fa-circle text-red-400"></i><span>vMix Disconnected</span>';
+
+  // Graphics buttons update - simple & clean
+  const btns = [
+    { id: 'bonusBtn', key: 'bonus', label: 'BONUS', icon: 'fa-gift' },
+    { id: 'doorDieBtn', key: 'doOrDie', label: 'DO OR DIE', icon: 'fa-skull-crossbones' },
+    { id: 'superTackleHomeBtn', key: 'superTackleHome', label: 'SUPER TACKLE HOME', icon: 'fa-shield-halved' },
+    { id: 'superTackleAwayBtn', key: 'superTackleAway', label: 'SUPER TACKLE AWAY', icon: 'fa-shield-halved' }
+  ];
+
+  btns.forEach(b => {
+    const btn = document.getElementById(b.id);
+    if (!btn) return;
+    const on = state.graphics[b.key];
+    btn.innerHTML = `<i class="fa-solid ${b.icon}"></i> ${b.label} ${on ? 'OFF' : 'ON'}`;
+    btn.className = `w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+      on ? 'bg-emerald-600 hover:bg-emerald-500 border border-emerald-400' : 'bg-indigo-700 hover:bg-indigo-600'
+    }`;
+  });
+
+  if (state.vmix.connected) syncToVmix();
+  saveToStorage();
+}
+
+// Timer functions
+function startGameTimer() {
+  if (state.gameRunning) return;
+  state.gameRunning = true;
+  gameInterval = setInterval(() => {
+    if (state.gameTime > 0) {
+      state.gameTime--;
+      updateUI();
+    } else pauseGameTimer();
+  }, 1000);
+}
+
+function pauseGameTimer() {
+  state.gameRunning = false;
+  clearInterval(gameInterval);
+  updateUI();
+}
+
+function resetGameTimer() {
+  pauseGameTimer();
+  state.gameTime = 900;
+  updateUI();
+}
+
+function startRaidTimer() {
+  if (state.raidRunning) clearInterval(raidInterval);
+  state.raidRunning = true;
+  raidInterval = setInterval(() => {
+    if (state.raidTime > 0) {
+      state.raidTime--;
+      updateUI();
+    } else stopRaidTimer();
+  }, 1000);
+}
+
+function stopRaidTimer() {
+  state.raidRunning = false;
+  clearInterval(raidInterval);
+  updateUI();
+}
+
+function setRaidTime(seconds) {
+  stopRaidTimer();
+  state.raidTime = seconds;
+  updateUI();
+}
+
+function makeEditable(el, getter, setter, isTimer = false) {
+  el.addEventListener('dblclick', (e) => {
+    e.stopPropagation();
+    const current = getter();
+    const newVal = prompt('Enter new value:', current);
+    if (newVal !== null) {
+      if (isTimer && newVal.includes(':')) {
+        const [m, s] = newVal.split(':').map(Number);
+        setter((m || 0) * 60 + (s || 0));
+      } else {
+        setter(isTimer ? Number(newVal) : newVal.toUpperCase());
+      }
+      updateUI();
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadFromStorage();
+
+  makeEditable(document.getElementById('homeNameCtrl'), () => state.homeName, v => state.homeName = v);
+  makeEditable(document.getElementById('awayNameCtrl'), () => state.awayName, v => state.awayName = v);
+  makeEditable(document.getElementById('homeScoreCtrl'), getTotalHomeScore, v => {
+    const diff = Number(v) - getTotalHomeScore();
+    getCurrentHalfScores().home += diff;
+  });
+  makeEditable(document.getElementById('awayScoreCtrl'), getTotalAwayScore, v => {
+    const diff = Number(v) - getTotalAwayScore();
+    getCurrentHalfScores().away += diff;
+  });
+  makeEditable(document.getElementById('gameTimerDisplay'), () => formatTime(state.gameTime), v => {
+    if (typeof v === 'number') state.gameTime = v;
+  }, true);
+
+  document.getElementById('halfSelect').addEventListener('change', e => {
+    state.currentHalf = Number(e.target.value);
+    updateUI();
+  });
+
+  document.getElementById('gameStart').onclick = startGameTimer;
+  document.getElementById('gamePause').onclick = pauseGameTimer;
+  document.getElementById('gameReset').onclick = resetGameTimer;
+
+  document.querySelectorAll('[data-game-adjust]').forEach(btn => {
+    btn.onclick = () => {
+      const adj = Number(btn.dataset.gameAdjust);
+      state.gameTime = Math.max(0, Math.min(3600, state.gameTime + adj));
+      updateUI();
+    };
+  });
+
+  document.getElementById('raidStart').onclick = startRaidTimer;
+  document.getElementById('raidStop').onclick = stopRaidTimer;
+  document.getElementById('raidReset').onclick = () => setRaidTime(30);
+  document.getElementById('raidPlus1s').onclick = () => {
+    state.raidTime = Math.max(0, Math.min(300, state.raidTime + 1));
+    updateUI();
+  };
+  document.getElementById('raidMinus1s').onclick = () => {
+    state.raidTime = Math.max(0, state.raidTime - 1);
+    updateUI();
+  };
+
+  document.querySelectorAll('[data-home]').forEach(btn => {
+    btn.onclick = () => {
+      const val = Number(btn.dataset.home);
+      getCurrentHalfScores().home = Math.max(0, getCurrentHalfScores().home + val);
+      updateUI();
+    };
+  });
+
+  document.querySelectorAll('[data-away]').forEach(btn => {
+    btn.onclick = () => {
+      const val = Number(btn.dataset.away);
+      getCurrentHalfScores().away = Math.max(0, getCurrentHalfScores().away + val);
+      updateUI();
+    };
+  });
+
+  document.getElementById('homeAllOut').onclick = () => { getCurrentHalfScores().home += 2; updateUI(); };
+  document.getElementById('awayAllOut').onclick = () => { getCurrentHalfScores().away += 2; updateUI(); };
+  document.getElementById('homeBonus').onclick = () => { getCurrentHalfScores().home += 1; updateUI(); };
+  document.getElementById('awayBonus').onclick = () => { getCurrentHalfScores().away += 1; updateUI(); };
+
+  document.getElementById('setHomeRaid').onclick = () => { state.raidingTeam = 'home'; updateUI(); };
+  document.getElementById('setAwayRaid').onclick = () => { state.raidingTeam = 'away'; updateUI(); };
+  document.getElementById('setNoneRaid').onclick = () => { state.raidingTeam = 'none'; updateUI(); };
+
+  document.getElementById('swapTeamsBtn').onclick = () => {
+    [state.homeName, state.awayName] = [state.awayName, state.homeName];
+    state.halves.forEach(h => [h.home, h.away] = [h.away, h.home]);
+    if (state.raidingTeam === 'home') state.raidingTeam = 'away';
+    else if (state.raidingTeam === 'away') state.raidingTeam = 'home';
+    updateUI();
+  };
+
+  document.getElementById('resetBtn').onclick = () => {
+    if (confirm('Sab reset karna hai?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  };
+
+  document.getElementById('vmixBtn').onclick = () => document.getElementById('vmixModal').classList.remove('hidden');
+  document.getElementById('vmixClose').onclick = () => document.getElementById('vmixModal').classList.add('hidden');
+  document.getElementById('vmixForm').onsubmit = e => {
+    e.preventDefault();
+    state.vmix.ip = document.getElementById('vmixIP').value.trim();
+    state.vmix.port = Number(document.getElementById('vmixPort').value) || 8088;
+    state.vmix.input = document.getElementById('vmixInput').value.trim();
+    state.vmix.connected = true;
+    document.getElementById('vmixModal').classList.add('hidden');
+    updateUI();
+    syncToVmix();
+  };
+
+  // Graphics buttons
+  document.getElementById('bonusBtn').onclick = () => toggleVmixGraphic('bonus');
+  document.getElementById('doorDieBtn').onclick = () => toggleVmixGraphic('doOrDie');
+  document.getElementById('superTackleHomeBtn').onclick = () => toggleVmixGraphic('superTackleHome');
+  document.getElementById('superTackleAwayBtn').onclick = () => toggleVmixGraphic('superTackleAway');
+
+  // Make vmixSetPlayerVisible available globally for the onchange events
+  window.vmixSetPlayerVisible = vmixSetPlayerVisible;
+
+  createOnMatPlayers();
+  updateUI();
+
+  if (state.gameRunning) startGameTimer();
+  if (state.raidRunning) startRaidTimer();
+
+  window.addEventListener('beforeunload', e => {
+    if (state.gameRunning || state.raidRunning) {
+      e.preventDefault();
+      e.returnValue = 'Timers chal rahe hain! Sure?';
+    }
+  });
+});
+</script>
+</body>
+</html>
